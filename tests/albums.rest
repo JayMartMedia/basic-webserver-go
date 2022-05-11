@@ -1,6 +1,14 @@
 # Manually test the albums endpoint
 
+###
+# Get all albums
+
 GET http://localhost:8080/albums
+
+###
+# Get a single album by its id
+
+GET http://localhost:8080/albums/2
 
 ###
 # Add a new album

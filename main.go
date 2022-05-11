@@ -23,6 +23,7 @@ var albums = []album{
 func main() {
 	router := gin.Default()
 	router.GET("/albums", getAlbums)
+	router.GET("/albums/:id", getAlbumById)
 	router.POST("/albums", postAlbums)
 
 	router.Run("localhost:8080")
@@ -33,11 +34,29 @@ func getAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums)
 }
 
+// getAlbumById gets a single album with the id provided in the request
+// and retuns that album
+func getAlbumById(c *gin.Context) {
+	id := c.Param("id")
+
+	// loop over albums, look for matching id
+	for _, a := range albums {
+		if a.ID == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+
+	// if no matches are found
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
+}
+
 // postAlbums adds an album from JSON received in the request body
 func postAlbums(c *gin.Context) {
 	var newAlbum album
 	
 	// TODO: add logic to check whether all required fields are present
+	// TODO: add logic to check whether an album with that id has already been created
 	// Call BindJSON to bind the received JSON to newAlbum
 	if err := c.BindJSON(&newAlbum); err != nil {
 		return
