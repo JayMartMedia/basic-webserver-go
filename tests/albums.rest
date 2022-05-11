@@ -1,3 +1,15 @@
 # Manually test the albums endpoint
 
 GET http://localhost:8080/albums
+
+###
+# Add a new album
+
+POST http://localhost:8080/albums
+
+{
+  "id": "4",
+  "title": "Red Bus",
+  "artist": "Bus Boyz",
+  "price": 12.99
+}
