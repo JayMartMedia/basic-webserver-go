@@ -22,9 +22,11 @@ var albums = []album{
 
 func main() {
 	router := gin.Default()
+	router.SetTrustedProxies([]string{"localhost"})
 	router.GET("/albums", getAlbums)
 	router.GET("/albums/:id", getAlbumById)
 	router.POST("/albums", postAlbums)
+	router.DELETE("/albums/:id", deleteAlbumById)
 
 	router.Run("localhost:8080")
 }
@@ -39,10 +41,10 @@ func getAlbums(c *gin.Context) {
 func getAlbumById(c *gin.Context) {
 	id := c.Param("id")
 
-	// loop over albums, look for matching id
-	for _, a := range albums {
-		if a.ID == id {
-			c.IndentedJSON(http.StatusOK, a)
+	// loop over albums, look for matching id to return
+	for _, album := range albums {
+		if album.ID == id {
+			c.IndentedJSON(http.StatusOK, album)
 			return
 		}
 	}
@@ -62,7 +64,30 @@ func postAlbums(c *gin.Context) {
 		return
 	}
 
-	// Add the new album to the slice
+	// Add the new album to the slice (writes to top level albums slice)
 	albums = append(albums, newAlbum)
 	c.IndentedJSON(http.StatusCreated, newAlbum)
+}
+
+// deleteAlbumById removes the albums with the provided id
+func deleteAlbumById(c *gin.Context) {
+	id := c.Param("id")
+
+	// loop over albums, look for matching id to remove
+	for i, album := range albums {
+		if album.ID == id {
+			// Removes the album from the slice (writes to top level albums slice)
+			albums = removeAlbum(albums, i)
+			c.IndentedJSON(http.StatusOK, album)
+			return
+		}
+	}
+
+	// if no matches are found
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
+}
+
+// Removes a single album at the provided index from a slice of albums
+func removeAlbum(slice []album, index int) []album {
+	return append(slice[:index], slice[index+1:]...)
 }

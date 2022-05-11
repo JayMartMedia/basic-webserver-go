@@ -6,7 +6,7 @@
 GET http://localhost:8080/albums
 
 ###
-# Get a single album by its id
+# Get a single album by id
 
 GET http://localhost:8080/albums/2
 
@@ -21,3 +21,8 @@ POST http://localhost:8080/albums
   "artist": "Bus Boyz",
   "price": 12.99
 }
+
+###
+# Delete a single album by id
+
+DELETE http://localhost:8080/albums/4
