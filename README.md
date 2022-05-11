@@ -2,7 +2,9 @@
 
 A basic go webserver which creates some endpoints which call functions to mutate an array in memory (in a production server, these functions would likely be reading/inserting into/from a database).
 
-Created while following this tutorial from the Go team: https://go.dev/doc/tutorial/web-service-gin
+Expands upon this tutorial from the Go team: https://go.dev/doc/tutorial/web-service-gin
+
+This repo adds delete and update endpoints.
 
 # Setup
 
