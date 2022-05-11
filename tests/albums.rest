@@ -26,3 +26,15 @@ POST http://localhost:8080/albums
 # Delete a single album by id
 
 DELETE http://localhost:8080/albums/4
+
+###
+# Update a single album by id
+
+PUT http://localhost:8080/albums/2
+
+{
+  "id": "2",
+  "title": "Geru (updated)",
+  "artist": "Jerry Mulligan (updated)",
+  "price": 99.71
+}

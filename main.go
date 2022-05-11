@@ -25,8 +25,9 @@ func main() {
 	router.SetTrustedProxies([]string{"localhost"})
 	router.GET("/albums", getAlbums)
 	router.GET("/albums/:id", getAlbumById)
-	router.POST("/albums", postAlbums)
+	router.POST("/albums", postAlbum)
 	router.DELETE("/albums/:id", deleteAlbumById)
+	router.PUT("/albums/:id", updateAlbumById)
 
 	router.Run("localhost:8080")
 }
@@ -53,8 +54,8 @@ func getAlbumById(c *gin.Context) {
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 }
 
-// postAlbums adds an album from JSON received in the request body
-func postAlbums(c *gin.Context) {
+// postAlbum adds an album from JSON received in the request body
+func postAlbum(c *gin.Context) {
 	var newAlbum album
 	
 	// TODO: add logic to check whether all required fields are present
@@ -69,7 +70,7 @@ func postAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newAlbum)
 }
 
-// deleteAlbumById removes the albums with the provided id
+// deleteAlbumById removes the album with the provided id
 func deleteAlbumById(c *gin.Context) {
 	id := c.Param("id")
 
@@ -79,6 +80,32 @@ func deleteAlbumById(c *gin.Context) {
 			// Removes the album from the slice (writes to top level albums slice)
 			albums = removeAlbum(albums, i)
 			c.IndentedJSON(http.StatusOK, album)
+			return
+		}
+	}
+
+	// if no matches are found
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
+}
+
+// updateAlbum updates the album with the provided id
+func updateAlbumById(c *gin.Context) {
+	id := c.Param("id")
+
+	var newAlbum album
+	
+	// TODO: add logic to check whether all required fields are present
+	// TODO: add logic to check whether an album with that id has already been created
+	// Call BindJSON to bind the received JSON to newAlbum
+	if err := c.BindJSON(&newAlbum); err != nil {
+		return
+	}
+
+	// loop over albums, look for matching id to overwrite
+	for i, album := range albums {
+		if album.ID == id {
+			albums[i] = newAlbum
+			c.IndentedJSON(http.StatusOK, newAlbum)
 			return
 		}
 	}
