@@ -2,25 +2,23 @@ package main
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
+
+	"jaymartmedia/basic_webserver_go/album"
 )
 
-// album represents data about a record album
-type album struct {
-	ID		 string	 `json:"id"`
-	Title	 string	 `json:"title"`
-	Artist string  `json:"artist"`
-	Price	 float64 `json:"price"`
-}
+var albums = make([]album.Album, 0)
 
-// albums slice to seed record album data
-var albums = []album{
-	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
-	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
-	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
+func seedData() {
+	albums = append(albums, album.New("Blue Train", "John Coltrane", 56.99))
+	albums = append(albums, album.New("Jeru", "Gerry Mulligan", 17.99))
+	albums = append(albums, album.New("Sarah Vaughan and Clifford Brown", "Sarah Vaughan", 39.99))
 }
 
 func main() {
+	seedData()
+
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"localhost"})
 	router.GET("/albums", getAlbums)
@@ -56,7 +54,7 @@ func getAlbumById(c *gin.Context) {
 
 // postAlbum adds an album from JSON received in the request body
 func postAlbum(c *gin.Context) {
-	var newAlbum album
+	var newAlbum album.Album
 	
 	// TODO: add logic to check whether all required fields are present
 	// TODO: add logic to check whether an album with that id has already been created
@@ -65,9 +63,11 @@ func postAlbum(c *gin.Context) {
 		return
 	}
 
-	// Add the new album to the slice (writes to top level albums slice)
-	albums = append(albums, newAlbum)
-	c.IndentedJSON(http.StatusCreated, newAlbum)
+	var a = album.New(newAlbum.Title,newAlbum.Artist,newAlbum.Price);
+
+	// Add the new album to the slice (writes to top level albums slice)\
+	albums = append(albums, a)
+	c.IndentedJSON(http.StatusCreated, a)
 }
 
 // deleteAlbumById removes the album with the provided id
@@ -92,7 +92,7 @@ func deleteAlbumById(c *gin.Context) {
 func updateAlbumById(c *gin.Context) {
 	id := c.Param("id")
 
-	var newAlbum album
+	var newAlbum album.Album
 	
 	// TODO: add logic to check whether all required fields are present
 	// TODO: add logic to check whether an album with that id has already been created
@@ -115,6 +115,6 @@ func updateAlbumById(c *gin.Context) {
 }
 
 // Removes a single album at the provided index from a slice of albums
-func removeAlbum(slice []album, index int) []album {
+func removeAlbum(slice []album.Album, index int) []album.Album {
 	return append(slice[:index], slice[index+1:]...)
 }
